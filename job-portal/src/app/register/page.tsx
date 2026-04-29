@@ -16,48 +16,48 @@ import {
 
 //type define for register form data
 interface RegisterFormData {
-    name:string;
-    userName:string;
-    email:string;
-    password:string;
-    confirmPassword:string;
-    role:'applicant' | 'employer'
+  name: string;
+  userName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: 'applicant' | 'employer'
 }
 
-const Register:React.FC = () => {
-    const [formData, setFormData] = useState<RegisterFormData>({
-        name:"",
-        userName:"",
-        email:"",
-        password:"",
-        confirmPassword:"",
-        role:"applicant",
-    })
+const Register: React.FC = () => {
+  const [formData, setFormData] = useState<RegisterFormData>({
+    name: "",
+    userName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "applicant",
+  })
 
-    const [showPassword, setShowPassword] = useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value })
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  const handleRoleChange = (value: 'applicant' | 'employer') => {
+    setFormData({ ...formData, role: value })
+  }
+  console.log(formData);
+
+  const handleSubmit = (e: FormEvent) => {
+    try {
+      e.preventDefault()
+    } catch (error) {
+
     }
-
-    const handleRoleChange = (value: 'applicant' | 'employer') => {
-        setFormData({ ...formData, role: value })
-    }
-    console.log(formData);
-
-    const handleSubmit = (e:FormEvent)=>{
-      try {
-        e.preventDefault()
-      } catch (error) {
-        
-      }
-    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50/50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[450px] w-full space-y-8 bg-white p-8 sm:p-10 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.05)] border border-gray-100">
-        
+
         {/* Header Section */}
         <div className="flex flex-col items-center">
           <div className="bg-[#1877F2] p-4 rounded-full mb-5 shadow-sm">
@@ -193,7 +193,7 @@ const Register:React.FC = () => {
           <Button type="submit" className="w-full bg-[#1877F2] hover:bg-blue-700 text-white py-6 text-base rounded-xl mt-4 font-semibold">
             Create Account
           </Button>
-          
+
           {/* Login Link */}
           <p className="text-center text-sm text-gray-500 mt-6">
             Already have an account?{' '}
