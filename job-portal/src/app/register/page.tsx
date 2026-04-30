@@ -56,7 +56,7 @@ const Register: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50/50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[450px] w-full space-y-8 bg-white p-8 sm:p-10 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.05)] border border-gray-100">
+      <div className="max-w-112.5 w-full space-y-8 bg-white p-8 sm:p-10 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.05)] border border-gray-100">
 
         {/* Header Section */}
         <div className="flex flex-col items-center">
