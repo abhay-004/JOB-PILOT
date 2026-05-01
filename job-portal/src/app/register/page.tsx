@@ -14,6 +14,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+import { registerAction } from "./registerActions.action";
+
+
 //type define for register form data
 interface RegisterFormData {
   name: string;
@@ -46,12 +49,17 @@ const Register: React.FC = () => {
   }
   console.log(formData);
 
-  const handleSubmit = (e: FormEvent) => {
-    try {
-      e.preventDefault()
-    } catch (error) {
-
+  const handleSubmit = async(e: FormEvent) => {
+    e.preventDefault()
+    
+    const registerData = {
+      name:formData.name.trim(),
+      userName:formData.userName.trim(),
+      email:formData.email.toLowerCase().trim(),
+      password:formData.password,
+      role:formData.role
     }
+    await registerAction(registerData)
   }
 
   return (
@@ -68,7 +76,7 @@ const Register: React.FC = () => {
         </div>
 
         {/* Form Section */}
-        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+        <form  className="mt-8 space-y-5" onSubmit={handleSubmit}>
           {/* Full Name */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-semibold">Full Name *</Label>
@@ -126,6 +134,7 @@ const Register: React.FC = () => {
           {/* Role Selection */}
           <div className="space-y-2">
             <Label htmlFor="role" className="text-sm font-semibold">I am a *</Label>
+            <input type="hidden" name="role" value={formData.role} />
             <Select value={formData.role} onValueChange={handleRoleChange}>
               <SelectTrigger className="w-full py-6 text-base rounded-xl bg-white border border-gray-300">
                 <SelectValue placeholder="Select your role" />
