@@ -8,6 +8,27 @@
       "when": 1777540120948,
       "tag": "0000_odd_sally_floyd",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1777654986730,
+      "tag": "0001_strange_mysterio",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1777655585119,
+      "tag": "0002_thin_moira_mactaggert",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1777656524944,
+      "tag": "0003_curved_turbo",
+      "breakpoints": true
     }
   ]
 }
