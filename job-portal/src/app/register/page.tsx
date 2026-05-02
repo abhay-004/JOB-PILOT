@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select"
 
 import { registerAction } from "./registerActions.action";
+import { toast } from "sonner";
 
 
 //type define for register form data
@@ -60,9 +61,22 @@ const Register: React.FC = () => {
     }
 
     if(formData.password !== formData.confirmPassword){
-      return alert("Password is not matching")
+      return toast.error("Password is not matching")
     }
-    await registerAction(registerData)
+     const result = await registerAction(registerData)
+     if(result?.status === "success"){
+      toast.success(result.message)
+      setFormData({
+        name: "",
+        userName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        role: "applicant",
+      })
+     }else{
+      toast.error(result?.message)
+     }
   }
 
   return (
