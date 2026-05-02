@@ -4,17 +4,17 @@ import { db } from "@/config/db";
 import { users } from "@/drizzle/schema";
 import  argon2  from "argon2";
 import { eq, or } from "drizzle-orm";
+import { registerSchema, RegisterUserData } from "../auth.schema";
 
-export const registerAction = async (data: {
-    name: string;
-    userName: string;
-    email: string;
-    password: string;
-    role: "applicant" | "employer";
-}) => {
+export const registerAction = async (data:RegisterUserData) => {
 
     try {
-    const {name,userName,email,password,role}=data
+
+    const{data:validatedData,error}=registerSchema.safeParse(data)
+
+    if(error)return{status:"error",message:error.issues[0].message}
+
+    const {name,userName,email,password,role}=validatedData
 
     const [user] = await db.select().from(users).where(or(eq(users.email,email),eq(users.userName,userName))) 
     
