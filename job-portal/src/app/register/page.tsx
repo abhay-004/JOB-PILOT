@@ -16,64 +16,34 @@ import {
 
 import { registerAction } from "@/features/auth/server/auth.actions";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { registerWithConfirmSchema, RegisteUserWithConfirmData } from "@/features/auth/auth.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 
-//type define for register form data
-interface RegisterFormData {
-  name: string;
-  userName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  role: 'applicant' | 'employer'
-}
+import { z } from "zod";
 
 const Register: React.FC = () => {
-  const [formData, setFormData] = useState<RegisterFormData>({
-    name: "",
-    userName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    role: "applicant",
-  })
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<z.input<typeof registerWithConfirmSchema>, any, z.infer<typeof registerWithConfirmSchema>>({
+    resolver:zodResolver(registerWithConfirmSchema)
+  });
+
 
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
 
-  const handleRoleChange = (value: 'applicant' | 'employer') => {
-    setFormData({ ...formData, role: value })
-  }
 
-  const handleSubmit = async(e: FormEvent) => {
-    e.preventDefault()
-    
-    const registerData = {
-      name:formData.name.trim(),
-      userName:formData.userName.trim(),
-      email:formData.email.toLowerCase().trim(),
-      password:formData.password,
-      role:formData.role
-    }
-
-    if(formData.password !== formData.confirmPassword){
-      return toast.error("Password is not matching")
-    }
-     const result = await registerAction(registerData)
+  const onSubmit = async(data:RegisteUserWithConfirmData) => {
+     const result = await registerAction(data)
      if(result?.status === "success"){
       toast.success(result.message)
-      setFormData({
-        name: "",
-        userName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        role: "applicant",
-      })
      }else{
       toast.error(result?.message)
      }
@@ -93,7 +63,7 @@ const Register: React.FC = () => {
         </div>
 
         {/* Form Section */}
-        <form  className="mt-8 space-y-5" onSubmit={handleSubmit}>
+        <form  className="mt-8 space-y-5" onSubmit={handleSubmit(onSubmit)}>
           {/* Full Name */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-semibold">Full Name *</Label>
@@ -101,15 +71,13 @@ const Register: React.FC = () => {
               <User className="absolute left-3.5 top-3 h-5 w-5 text-gray-400" />
               <Input
                 id="name"
-                name="name"
                 type="text"
                 placeholder="Enter your full name"
                 className="pl-11 py-6 text-base rounded-xl"
-                value={formData.name}
-                onChange={handleChange}
-                required
+                {...register("name")}
               />
             </div>
+            {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
           </div>
 
           {/* Username */}
@@ -119,15 +87,13 @@ const Register: React.FC = () => {
               <User className="absolute left-3.5 top-3 h-5 w-5 text-gray-400" />
               <Input
                 id="userName"
-                name="userName"
                 type="text"
                 placeholder="Choose a username"
-                className="pl-11 py-6 text-base rounded-xl"
-                value={formData.userName}
-                onChange={handleChange}
-                required
+                className={`pl-11 py-6 text-base rounded-xl`}
+                {...register("userName")}
               />
             </div>
+            {errors.userName && <p className="text-red-500 text-sm">{errors.userName.message}</p>}
           </div>
 
           {/* Email Address */}
@@ -137,22 +103,20 @@ const Register: React.FC = () => {
               <Mail className="absolute left-3.5 top-3 h-5 w-5 text-gray-400" />
               <Input
                 id="email"
-                name="email"
                 type="email"
                 placeholder="Enter your email"
                 className="pl-11 py-6 text-base rounded-xl"
-                value={formData.email}
-                onChange={handleChange}
-                required
+                {...register("email")}
               />
             </div>
+            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
           </div>
 
           {/* Role Selection */}
           <div className="space-y-2">
             <Label htmlFor="role" className="text-sm font-semibold">I am a *</Label>
-            <input type="hidden" name="role" value={formData.role} />
-            <Select value={formData.role} onValueChange={handleRoleChange}>
+            <input type="hidden" name="role" />
+            <Select {...register("role")}>
               <SelectTrigger className="w-full py-6 text-base rounded-xl bg-white border border-gray-300">
                 <SelectValue placeholder="Select your role" />
               </SelectTrigger>
@@ -161,6 +125,7 @@ const Register: React.FC = () => {
                 <SelectItem value="employer" className="cursor-pointer py-2 hover:bg-gray-50 focus:bg-gray-50 rounded-lg outline-none transition-colors">Employer</SelectItem>
               </SelectContent>
             </Select>
+            {errors.role && <p className="text-red-500 text-sm">{errors.role.message}</p>}
           </div>
 
           {/* Password */}
@@ -170,14 +135,11 @@ const Register: React.FC = () => {
               <Lock className="absolute left-3.5 top-3 h-5 w-5 text-gray-400" />
               <Input
                 id="password"
-                name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Create a strong password"
                 className="pl-11 pr-11 py-6 text-base rounded-xl"
-                value={formData.password}
-                onChange={handleChange}
                 autoComplete="new-password"
-                required
+                {...register("password")}
               />
               <button
                 type="button"
@@ -187,6 +149,7 @@ const Register: React.FC = () => {
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
+            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
           </div>
 
           {/* Confirm Password */}
@@ -196,14 +159,11 @@ const Register: React.FC = () => {
               <Lock className="absolute left-3.5 top-3 h-5 w-5 text-gray-400" />
               <Input
                 id="confirmPassword"
-                name="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm your password"
                 className="pl-11 pr-11 py-6 text-base rounded-xl"
-                value={formData.confirmPassword}
-                onChange={handleChange}
                 autoComplete="new-password"
-                required
+                {...register("confirmPassword")}
               />
               <button
                 type="button"
@@ -213,6 +173,7 @@ const Register: React.FC = () => {
                 {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
+            {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
           </div>
 
           {/* Submit Button */}
