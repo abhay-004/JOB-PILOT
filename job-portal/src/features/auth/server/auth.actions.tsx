@@ -47,3 +47,43 @@ export const registerAction = async (data: {
     }
 }
 
+
+type LoginData = {
+    email:string,
+    password:string
+}
+
+export const loginAction = async(data:LoginData)=>{
+
+    try {
+        const {email,password} = data;
+        const[user] = await db.select().from(users).where(eq(users.email,email))
+
+        if(!user){
+            return {
+                status:"error",
+                message:"Invalid email or password"
+            }
+        }
+
+        const isPassMatch  = await argon2.verify(user.password,password)
+
+        if(!isPassMatch){
+            return {
+                status:"error",
+                message:"Invalid email or password"
+            }
+        }
+        
+        return {
+            status: "success",
+            message: "Logged in successfully"
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            status: "error",
+            message: "Something went wrong"
+        }
+    }
+}
