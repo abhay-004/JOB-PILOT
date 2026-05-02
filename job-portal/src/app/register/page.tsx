@@ -47,7 +47,6 @@ const Register: React.FC = () => {
   const handleRoleChange = (value: 'applicant' | 'employer') => {
     setFormData({ ...formData, role: value })
   }
-  console.log(formData);
 
   const handleSubmit = async(e: FormEvent) => {
     e.preventDefault()
@@ -58,6 +57,10 @@ const Register: React.FC = () => {
       email:formData.email.toLowerCase().trim(),
       password:formData.password,
       role:formData.role
+    }
+
+    if(formData.password !== formData.confirmPassword){
+      return alert("Password is not matching")
     }
     await registerAction(registerData)
   }
