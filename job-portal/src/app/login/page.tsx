@@ -13,6 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { loginAction } from "@/features/auth/server/auth.actions";
+import { toast } from "sonner";
 
 //type define for register form data
 interface LoginFormData {
@@ -33,11 +35,27 @@ const Login:React.FC = () => {
     }
 
   
-    const handleSubmit = (e:FormEvent)=>{
+    const handleSubmit = async(e:FormEvent)=>{
       try {
         e.preventDefault()
+        const loginData = {
+          email:formData.email,
+          password:formData.password,
+        }
+
+        const result = await loginAction(loginData)
+        if(result?.status === "success"){
+          toast.success(result.message)
+          setFormData({
+            email:"",
+            password:"",
+          })
+        }else{
+          toast.error(result?.message)
+        }
       } catch (error) {
-        
+        console.log(error)
+        toast.error("Something went wrong")
       }
     }
 
