@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-import { registerAction } from "./registerActions.action";
+import { registerAction } from "@/features/auth/server/auth.actions";
 import { toast } from "sonner";
 
 
