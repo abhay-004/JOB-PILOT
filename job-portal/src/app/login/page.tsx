@@ -15,41 +15,33 @@ import {
 } from "@/components/ui/select"
 import { loginAction } from "@/features/auth/server/auth.actions";
 import { toast } from "sonner";
-
-//type define for register form data
-interface LoginFormData {
-    email:string;
-    password:string;
-}
+import { useForm } from "react-hook-form";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, LoginUserData } from "@/features/auth/auth.schema";
 
 const Login:React.FC = () => {
-    const [formData, setFormData] = useState<LoginFormData>({
-        email:"",
-        password:"",
-    })
+
+    const {
+      register,
+      handleSubmit,
+      watch,
+      formState: { errors },
+    } = useForm<LoginUserData>({
+      resolver:zodResolver(loginSchema)
+    });
+  
+   
 
     const [showPassword, setShowPassword] = useState(false)
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value })
-    }
-
   
-    const handleSubmit = async(e:FormEvent)=>{
+    const onSubmit = async(data:LoginUserData)=>{
       try {
-        e.preventDefault()
-        const loginData = {
-          email:formData.email,
-          password:formData.password,
-        }
-
-        const result = await loginAction(loginData)
+        
+        const result = await loginAction(data)
         if(result?.status === "success"){
           toast.success(result.message)
-          setFormData({
-            email:"",
-            password:"",
-          })
         }else{
           toast.error(result?.message)
         }
@@ -73,7 +65,7 @@ const Login:React.FC = () => {
         </div>
 
         {/* Form Section */}
-        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-5" onSubmit={handleSubmit(onSubmit)}>
           {/* Email Address */}
           <div className="space-y-2">
             <Label htmlFor="email" className="text-sm font-semibold">Email Address *</Label>
@@ -81,15 +73,13 @@ const Login:React.FC = () => {
               <Mail className="absolute left-3.5 top-3 h-5 w-5 text-gray-400" />
               <Input
                 id="email"
-                name="email"
                 type="email"
                 placeholder="Enter your email"
                 className="pl-11 py-6 text-base rounded-xl"
-                value={formData.email}
-                onChange={handleChange}
-                required
+               {...register("email")}
               />
             </div>
+            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
           </div>
 
           {/* Password */}
@@ -99,14 +89,11 @@ const Login:React.FC = () => {
               <Lock className="absolute left-3.5 top-3 h-5 w-5 text-gray-400" />
               <Input
                 id="password"
-                name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 className="pl-11 pr-11 py-6 text-base rounded-xl"
-                value={formData.password}
-                onChange={handleChange}
                 autoComplete="new-password"
-                required
+                {...register("password")}
               />
               <button
                 type="button"
@@ -116,6 +103,7 @@ const Login:React.FC = () => {
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
+            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
           </div>
 
           {/* Submit Button */}
