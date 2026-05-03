@@ -5,6 +5,10 @@ import { users } from "@/drizzle/schema";
 import  argon2  from "argon2";
 import { eq, or } from "drizzle-orm";
 import { registerSchema, RegisterUserData } from "../auth.schema";
+import { createSessionAndSetCookies } from "./use-cases/sessions";
+
+
+//For register
 
 export const registerAction = async (data:RegisterUserData) => {
 
@@ -53,6 +57,9 @@ type LoginData = {
     password:string
 }
 
+
+//For login
+
 export const loginAction = async(data:LoginData)=>{
 
     try {
@@ -74,6 +81,8 @@ export const loginAction = async(data:LoginData)=>{
                 message:"Invalid email or password"
             }
         }
+
+         await createSessionAndSetCookies(user.id)
         
         return {
             status: "success",
@@ -87,3 +96,6 @@ export const loginAction = async(data:LoginData)=>{
         }
     }
 }
+
+
+
