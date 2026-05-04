@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { getIPAddress } from "./location";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { db } from "@/config/db";
 import { sessions } from "@/drizzle/schema";
 import { SESSION_LIFETIME } from "@/config/constant";
@@ -49,5 +49,13 @@ export const createSessionAndSetCookies = async (userId: number) => {
     userId: userId,
     userAgent: headersList.get("user-agent") || "",
     ip: ip,
+  });
+
+  const cookiesStore = await cookies();
+
+  cookiesStore.set("session", token, {
+    httpOnly: true,
+    secure: true,
+    maxAge: SESSION_LIFETIME,
   });
 };
